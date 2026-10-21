@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>BRONZ — لوحة إدارة المنتجات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--beige:#EDE3D5;--beige-dark:#D9CAB5;--burgundy:#5A0E1F;--burgundy-light:#7A1E30;--pale:#E8C8CF;--gold:#B8923A;--gold-light:#D4AF6A;--ink:#1E0D08;--mid:#4A2E20;--soft:#7A5A45;--white:#FAF6F0;--danger:#a42a1f}
+body{font-family:'Tajawal',Tahoma,Arial,sans-serif;background:var(--beige);color:var(--ink);min-height:100vh;padding-bottom:60px}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+header{background:var(--burgundy);border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:20}
+.bar{max-width:980px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{color:var(--gold-light);font-weight:700;font-size:20px;letter-spacing:4px}
+.brand small{display:block;font-size:12px;letter-spacing:0;font-weight:400;color:rgba(237,227,213,.7)}
+.bar-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1.5px solid var(--burgundy);background:none;color:var(--burgundy);border-radius:8px;padding:9px 16px;font-size:14px;font-weight:500;transition:background .15s,color .15s}
+.btn:hover{background:var(--burgundy);color:var(--gold-light)}
+.btn.primary{background:var(--burgundy);color:var(--gold-light)}
+.btn.primary:hover{background:var(--burgundy-light)}
+header .btn{border-color:var(--gold);color:var(--gold-light)}
+header .btn:hover{background:rgba(184,146,58,.2)}
+header .btn.primary{background:var(--gold);color:var(--burgundy);font-weight:700}
+header .btn.primary:hover{background:var(--gold-light)}
+.btn.danger{border-color:var(--danger);color:var(--danger)}
+.btn.danger:hover{background:var(--danger);color:#fff}
+.btn.small{padding:5px 11px;font-size:13px}
+
+main{max-width:980px;margin:0 auto;padding:18px 16px}
+.banner{background:var(--white);border-right:4px solid var(--gold);padding:12px 14px;border-radius:8px;margin-bottom:14px;font-size:14px;color:var(--mid);display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.banner.warn{border-color:var(--danger)}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.tools input,.tools select{padding:10px 12px;border:1.5px solid var(--beige-dark);border-radius:8px;background:var(--white);font:inherit;font-size:14px;color:var(--ink)}
+.tools input{flex:1;min-width:160px}
+.count{font-size:13px;color:var(--soft);margin-bottom:8px}
+
+.row{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;background:var(--white);border:1px solid var(--beige-dark);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.thumb{width:64px;height:64px;border-radius:8px;object-fit:cover;background:var(--pale);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--burgundy);text-align:center}
+.r-name{font-weight:700;font-size:15px}
+.r-meta{font-size:13px;color:var(--soft);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap}
+.r-price{color:var(--burgundy);font-weight:700}
+.r-old{text-decoration:line-through}
+.r-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tag{background:var(--pale);color:var(--burgundy);border-radius:4px;padding:0 7px;font-size:12px;font-weight:700}
+.empty{text-align:center;padding:50px 10px;color:var(--soft)}
+@media(max-width:560px){.row{grid-template-columns:56px 1fr}.thumb{width:56px;height:56px}.r-actions{grid-column:1/-1;justify-content:flex-start}}
+
+dialog{border:none;border-radius:14px;background:var(--white);width:min(640px,94vw);max-height:92vh;padding:0;box-shadow:0 24px 60px rgba(90,14,31,.4);color:var(--ink)}
+dialog::backdrop{background:rgba(30,13,8,.7)}
+.d-head{padding:16px 20px;border-bottom:1px solid var(--beige-dark);font-weight:700;font-size:18px;color:var(--burgundy)}
+.d-body{padding:18px 20px;overflow-y:auto;max-height:calc(92vh - 130px)}
+.d-foot{padding:14px 20px;border-top:1px solid var(--beige-dark);display:flex;gap:8px;justify-content:flex-start}
+.f{margin-bottom:14px}
+.f label{display:block;font-size:13px;color:var(--soft);margin-bottom:5px;font-weight:500}
+.f input,.f select,.f textarea{width:100%;padding:10px 12px;border:1.5px solid var(--beige-dark);border-radius:8px;background:var(--beige);font:inherit;font-size:15px;color:var(--ink)}
+.f textarea{min-height:84px;resize:vertical;line-height:1.6}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--burgundy);outline:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hint{font-size:12px;color:var(--soft);margin-top:4px}
+.presets{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.img-row{display:grid;grid-template-columns:48px 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+.img-row img{width:48px;height:48px;border-radius:6px;object-fit:cover;background:var(--pale)}
+.img-row .uploaded{font-size:13px;color:var(--mid)}
+.img-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.err{color:var(--danger);font-size:13px;margin-top:6px;min-height:18px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--beige);padding:10px 18px;border-radius:8px;font-size:14px;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="brand">BRONZ<small>لوحة إدارة المنتجات</small></div>
+    <div class="bar-actions">
+      <button class="btn" id="btnNew">+ منتج جديد</button>
+      <button class="btn primary" id="btnPublish">إرسال إلى المتجر</button>
+      <button class="btn" id="btnSettings" aria-label="إعدادات" title="إعدادات">⚙</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="banner"></div>
+  <div class="tools">
+    <input id="search" type="search" placeholder="ابحث باسم المنتج…" aria-label="بحث">
+    <select id="catFilter" aria-label="التصنيف">
+      <option value="all">كل التصنيفات</option>
+      <option value="Offers">عروض</option>
+      <option value="women">نساء</option>
+      <option value="sport">رياضة</option>
+      <option value="luxury">فاخر</option>
+    </select>
+  </div>
+  <p class="count" id="count"></p>
+  <div id="list"></div>
+</main>
+
+<input type="file" id="fileImport" accept=".json,application/json" hidden>
+<input type="file" id="fileImages" accept="image/*" multiple hidden>
+
+<dialog id="dlg">
+  <div class="d-head" id="dTitle">منتج جديد</div>
+  <div class="d-body">
+    <div class="f"><label for="fName">اسم المنتج</label><input id="fName" maxlength="80"></div>
+    <div class="two">
+      <div class="f"><label for="fCat">التصنيف</label>
+        <select id="fCat">
+          <option value="Offers">عروض</option>
+          <option value="women">نساء</option>
+          <option value="sport">رياضة</option>
+          <option value="luxury">فاخر</option>
+        </select>
+      </div>
+      <div class="f"><label for="fPrice">السعر (MAD)</label><input id="fPrice" type="number" min="0" step="1" inputmode="numeric"></div>
+    </div>
+    <div class="f"><label for="fOld">السعر القديم (اختياري — يظهر مشطوبًا)</label><input id="fOld" type="number" min="0" step="1" inputmode="numeric"></div>
+    <div class="f"><label for="fDesc">الوصف</label><textarea id="fDesc"></textarea></div>
+    <div class="f">
+      <label for="fSizes">المقاسات (مفصولة بفاصلة)</label>
+      <input id="fSizes" dir="ltr" placeholder="XS, S, M, L, XL">
+      <div class="presets">
+        <button type="button" class="btn small" data-preset="women">مقاسات نساء</button>
+        <button type="button" class="btn small" data-preset="kids">مقاسات أطفال</button>
+        <button type="button" class="btn small" data-preset="luxury">مقاسات فاخر</button>
+      </div>
+    </div>
+    <div class="f">
+      <label>الصور (الأولى هي الصورة الرئيسية)</label>
+      <div id="imgList"></div>
+      <div class="img-actions">
+        <button type="button" class="btn small" id="btnAddUrl">+ رابط صورة</button>
+        <button type="button" class="btn small" id="btnUpload">رفع صورة من الجهاز</button>
+      </div>
+      <p class="hint">الصور المرفوعة تُصغَّر تلقائيًا وتُحفظ داخل الملف. الروابط الخارجية قد تتوقف عن العمل إذا حذفها صاحب الموقع.</p>
+    </div>
+    <p class="err" id="dErr"></p>
+  </div>
+  <div class="d-foot">
+    <button class="btn primary" id="btnSave">حفظ المنتج</button>
+    <button class="btn" id="btnCancel">إلغاء</button>
+  </div>
+</dialog>
+
+<dialog id="dlgGh">
+  <div class="d-head">ربط المتجر (مرة واحدة فقط)</div>
+  <div class="d-body">
+    <div class="two">
+      <div class="f"><label for="gUser">اسم حسابك في GitHub</label><input id="gUser" dir="ltr" autocomplete="off"></div>
+      <div class="f"><label for="gRepo">اسم المستودع (repo)</label><input id="gRepo" dir="ltr" autocomplete="off"></div>
+    </div>
+    <div class="f"><label for="gBranch">الفرع (branch)</label><input id="gBranch" dir="ltr" value="main"></div>
+    <div class="f"><label for="gToken">التوكن (Token)</label><input id="gToken" type="password" dir="ltr" autocomplete="off">
+      <p class="hint">يُحفظ في هذا المتصفح فقط ولا يدخل في الملف. لا تشاركه مع أحد.</p></div>
+    <div class="f" style="border-top:1px solid var(--beige-dark);padding-top:12px;margin-bottom:0">
+      <label>أدوات إضافية</label>
+      <div class="presets"><button type="button" class="btn small" id="btnImport">فتح ملف</button><button type="button" class="btn small" id="btnDownload">نسخة احتياطية</button></div>
+    </div>
+  </div>
+  <div class="d-foot">
+    <button class="btn primary" id="btnGhSave">حفظ الإعدادات</button>
+    <button class="btn" id="btnGhCancel">إلغاء</button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CAT_AR={Offers:'عروض',women:'نساء',sport:'رياضة',luxury:'فاخر'};
+const BADGE={Offers:'Offers',women:'Women',sport:'Sport',luxury:'Luxury'};
+const PRESETS={
+  women:['XS','S','M','L','XL','XXL'],
+  kids:['2Y','4Y','6Y','8Y','10Y','12Y'],
+  luxury:['XS','S','M','L','XL','XXL','XXXL']
+};
+const DRAFT_KEY='bronz_admin_draft_v1';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+let products=[], fileCopy=null, editingId=null, imgs=[];
+
+/* ---------- storage ---------- */
+function saveDraft(){
+  try{localStorage.setItem(DRAFT_KEY,JSON.stringify(products));}
+  catch(e){toast('المسودة كبيرة جدًا للحفظ التلقائي — نزّل الملف قبل الإغلاق');}
+}
+function commit(){saveDraft();render();}
+
+async function init(){
+  let draft=null;
+  try{draft=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null');}catch(e){}
+  if(ghReady()){try{const f=await ghGet('products.json');if(f&&f.content)fileCopy=JSON.parse(ghDecode(f.content));}catch(e){}}
+  if(!fileCopy){try{const r=await fetch('products.json',{cache:'no-store'});if(r.ok)fileCopy=await r.json();}catch(e){}}
+  if(Array.isArray(draft)&&JSON.stringify(draft)!==JSON.stringify(fileCopy)){
+    products=draft;
+  }else if(Array.isArray(fileCopy)){
+    products=fileCopy;
+  }
+  render();
+  if(!ghReady())openGhSettings();
+}
+
+/* ---------- list ---------- */
+function render(){
+  const q=$('search').value.trim().toLowerCase(), cat=$('catFilter').value;
+  const filtered=products.filter(p=>(cat==='all'||p.cat===cat)&&(!q||p.name.toLowerCase().includes(q)));
+  const canMove=!q&&cat==='all';
+  $('count').textContent=products.length?`${filtered.length} من ${products.length} منتج`:'';
+  renderBanner();
+  if(!filtered.length){
+    $('list').innerHTML=`<div class="empty">${products.length?'لا توجد نتائج مطابقة.':'لا توجد منتجات بعد. اضغط «منتج جديد» أو افتح ملف products.json.'}</div>`;
+    return;
+  }
+  $('list').innerHTML=filtered.map(p=>{
+    const img=p.images&&p.images[0];
+    return `<div class="row">
+      ${img?`<img class="thumb" src="${esc(imgSrc(img))}" alt="">`:`<div class="thumb">بدون صورة</div>`}
+      <div>
+        <div class="r-name">${esc(p.name)}</div>
+        <div class="r-meta"><span class="tag">${CAT_AR[p.cat]||esc(p.cat)}</span>
+          <span class="r-price">${esc(p.price)} MAD</span>
+          ${p.old?`<span class="r-old">${esc(p.old)} MAD</span>`:''}
+          <span>${(p.sizes||[]).length} مقاسات</span></div>
+      </div>
+      <div class="r-actions">
+        ${canMove?`<button class="btn small" onclick="move(${p.id},-1)" aria-label="للأعلى">↑</button><button class="btn small" onclick="move(${p.id},1)" aria-label="للأسفل">↓</button>`:''}
+        <button class="btn small" onclick="openEditor(${p.id})">تعديل</button>
+        <button class="btn small" onclick="dupe(${p.id})">نسخ</button>
+        <button class="btn small danger" onclick="del(${p.id})">حذف</button>
+      </div></div>`;
+  }).join('');
+}
+function renderBanner(){
+  const changed=JSON.stringify(products)!==JSON.stringify(fileCopy);
+  if(!changed){$('banner').innerHTML='';return;}
+  $('banner').innerHTML=ghReady()
+    ?`<div class="banner"><span>لديك تعديلات لم تُرسل بعد إلى المتجر.</span><button class="btn small primary" onclick="publish()">إرسال إلى المتجر</button></div>`
+    :`<div class="banner"><span>اربط المتجر أولًا من زر ⚙ ثم أرسل تعديلاتك.</span></div>`;
+}
+function move(id,dir){
+  const i=products.findIndex(p=>p.id===id), j=i+dir;
+  if(j<0||j>=products.length)return;
+  [products[i],products[j]]=[products[j],products[i]];
+  commit();
+}
+function dupe(id){
+  const p=products.find(x=>x.id===id); if(!p)return;
+  const c=JSON.parse(JSON.stringify(p));
+  c.id=nextId(); c.name+=' (نسخة)';
+  products.splice(products.indexOf(p)+1,0,c);
+  commit(); toast('تم نسخ المنتج');
+}
+function del(id){
+  const p=products.find(x=>x.id===id);
+  if(!p||!confirm(`حذف «${p.name}» نهائيًا؟`))return;
+  products=products.filter(x=>x.id!==id);
+  commit(); toast('تم حذف المنتج');
+}
+const nextId=()=>products.reduce((m,p)=>Math.max(m,p.id||0),0)+1;
+
+/* ---------- editor ---------- */
+function openEditor(id){
+  editingId=id??null;
+  const p=id!=null?products.find(x=>x.id===id):null;
+  $('dTitle').textContent=p?'تعديل المنتج':'منتج جديد';
+  $('fName').value=p?.name||'';
+  $('fCat').value=p?.cat||'women';
+  $('fPrice').value=p?.price??'';
+  $('fOld').value=p?.old??'';
+  $('fDesc').value=p?.desc||'';
+  $('fSizes').value=(p?p.sizes:PRESETS.women).join(', ');
+  imgs=p?[...(p.images||[])]:[''];
+  $('dErr').textContent='';
+  renderImgs();
+  $('dlg').showModal();
+}
+function renderImgs(){
+  $('imgList').innerHTML=imgs.map((s,i)=>{
+    const up=s.startsWith('data:');
+    return `<div class="img-row">
+      ${s?`<img src="${esc(imgSrc(s))}" alt="">`:'<img alt="">'}
+      ${up?`<span class="uploaded">صورة مرفوعة من الجهاز</span>`
+          :`<input dir="ltr" placeholder="https://…" value="${esc(s)}" oninput="imgs[${i}]=this.value.trim()" onchange="renderImgs()" aria-label="رابط الصورة ${i+1}">`}
+      <button type="button" class="btn small danger" onclick="imgs.splice(${i},1);renderImgs()">حذف</button>
+    </div>`;
+  }).join('');
+}
+function parseSizes(t){
+  return [...new Set(t.split(/[,،\s]+/).map(s=>s.trim().toUpperCase()).filter(Boolean))];
+}
+function saveProduct(){
+  const name=$('fName').value.trim(), price=Number($('fPrice').value);
+  const oldRaw=$('fOld').value.trim(), old=oldRaw?Number(oldRaw):null;
+  const sizes=parseSizes($('fSizes').value), images=imgs.map(s=>s.trim()).filter(Boolean);
+  const err=m=>{$('dErr').textContent=m;};
+  if(!name)return err('اكتب اسم المنتج.');
+  if(!(price>0))return err('اكتب سعرًا صحيحًا أكبر من صفر.');
+  if(old!==null&&!(old>price))return err('السعر القديم يجب أن يكون أكبر من السعر الحالي، أو اتركه فارغًا.');
+  if(!sizes.length)return err('أضف مقاسًا واحدًا على الأقل.');
+  if(!images.length)return err('أضف صورة واحدة على الأقل.');
+  const cat=$('fCat').value;
+  const data={name,cat,price,old,images,badge:BADGE[cat],desc:$('fDesc').value.trim(),sizes};
+  if(editingId!=null){
+    const i=products.findIndex(p=>p.id===editingId);
+    products[i]={id:editingId,...data};
+  }else{
+    products.push({id:nextId(),...data});
+  }
+  $('dlg').close(); commit(); toast('تم حفظ المنتج');
+}
+
+/* ---------- images ---------- */
+function resizeImage(file){
+  return new Promise((resolve,reject)=>{
+    const fr=new FileReader();
+    fr.onerror=reject;
+    fr.onload=()=>{
+      const im=new Image();
+      im.onerror=reject;
+      im.onload=()=>{
+        const max=900, k=Math.min(1,max/Math.max(im.width,im.height));
+        const c=document.createElement('canvas');
+        c.width=Math.round(im.width*k); c.height=Math.round(im.height*k);
+        c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+        resolve(c.toDataURL('image/jpeg',0.82));
+      };
+      im.src=fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+
+/* ---------- import / export ---------- */
+function download(){
+  const blob=new Blob([JSON.stringify(products,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='products.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  fileCopy=JSON.parse(JSON.stringify(products)); render();
+  toast('تم تنزيل products.json — ارفعه إلى موقعك');
+}
+
+/* ---------- GitHub publish ---------- */
+const GH_KEY='bronz_gh_v1';
+let gh=null;
+try{gh=JSON.parse(localStorage.getItem(GH_KEY)||'null');}catch(e){}
+function ghReady(){return !!(gh&&gh.owner&&gh.repo&&gh.token);}
+const ghBranch=()=>gh.branch||'main';
+const ghHeaders=()=>({'Authorization':'Bearer '+gh.token,'Accept':'application/vnd.github+json','Content-Type':'application/json'});
+const ghEncode=str=>btoa(unescape(encodeURIComponent(str)));
+const ghDecode=b=>decodeURIComponent(escape(atob(b.replace(/\n/g,''))));
+function imgSrc(s){
+  if(s&&ghReady()&&!/^(data:|https?:|\/)/.test(s))return `https://raw.githubusercontent.com/${gh.owner}/${gh.repo}/${ghBranch()}/${s}`;
+  return s;
+}
+async function ghFail(r){
+  if(r.status===401)return 'التوكن غير صحيح أو منتهي الصلاحية.';
+  if(r.status===403)return 'التوكن لا يملك صلاحية الكتابة (Contents: Read and write).';
+  if(r.status===404)return 'لم أجد المستودع أو الفرع. تأكد من الاسم في إعدادات النشر.';
+  if(r.status===409||r.status===422)return 'تعارض أثناء الحفظ. أعد المحاولة.';
+  return 'فشل النشر ('+r.status+').';
+}
+async function ghGet(path){
+  const r=await fetch(`https://api.github.com/repos/${gh.owner}/${gh.repo}/contents/${path}?ref=${encodeURIComponent(ghBranch())}`,{headers:ghHeaders(),cache:'no-store'});
+  if(r.status===404)return null;
+  if(!r.ok)throw new Error(await ghFail(r));
+  return r.json();
+}
+async function ghPut(path,b64,sha,message){
+  const body={message,content:b64,branch:ghBranch()};
+  if(sha)body.sha=sha;
+  const r=await fetch(`https://api.github.com/repos/${gh.owner}/${gh.repo}/contents/${path}`,{method:'PUT',headers:ghHeaders(),body:JSON.stringify(body)});
+  if(!r.ok)throw new Error(await ghFail(r));
+  return r.json();
+}
+async function publish(){
+  if(!ghReady()){openGhSettings();return;}
+  const btn=$('btnPublish'); btn.disabled=true; btn.textContent='جارٍ الإرسال…';
+  try{
+    let n=0;
+    for(const p of products){
+      for(let i=0;i<p.images.length;i++){
+        if(p.images[i].startsWith('data:')){
+          const name=`images/p${p.id}-${Date.now()}-${n++}.jpg`;
+          await ghPut(name,p.images[i].split(',')[1],null,'Add product image');
+          p.images[i]=name;
+        }
+      }
+    }
+    const cur=await ghGet('products.json');
+    await ghPut('products.json',ghEncode(JSON.stringify(products,null,2)),cur&&cur.sha,'Update products from admin');
+    fileCopy=JSON.parse(JSON.stringify(products)); saveDraft(); render();
+    toast('تم الإرسال. يظهر في المتجر بعد دقيقة أو دقيقتين.');
+  }catch(e){toast(e.message||'فشل النشر');}
+  finally{btn.disabled=false;btn.textContent='إرسال إلى المتجر';}
+}
+function openGhSettings(){
+  $('gUser').value=gh?.owner||''; $('gRepo').value=gh?.repo||'';
+  $('gBranch').value=gh?.branch||'main'; $('gToken').value=gh?.token||'';
+  $('dlgGh').showModal();
+}
+function saveGhSettings(){
+  const g={owner:$('gUser').value.trim(),repo:$('gRepo').value.trim(),branch:$('gBranch').value.trim()||'main',token:$('gToken').value.trim()};
+  if(!g.owner||!g.repo||!g.token){toast('املأ اسم الحساب والمستودع والتوكن');return;}
+  gh=g;
+  try{localStorage.setItem(GH_KEY,JSON.stringify(gh));}catch(e){}
+  $('dlgGh').close(); render(); toast('تم حفظ الإعدادات');
+}
+
+/* ---------- events ---------- */
+$('btnNew').onclick=()=>openEditor(null);
+$('btnCancel').onclick=()=>$('dlg').close();
+$('btnSave').onclick=saveProduct;
+$('btnDownload').onclick=download;
+$('btnPublish').onclick=publish;
+$('btnSettings').onclick=openGhSettings;
+$('btnGhSave').onclick=saveGhSettings;
+$('btnGhCancel').onclick=()=>$('dlgGh').close();
+$('btnImport').onclick=()=>$('fileImport').click();
+$('btnAddUrl').onclick=()=>{imgs.push('');renderImgs();};
+$('btnUpload').onclick=()=>$('fileImages').click();
+$('search').oninput=render;
+$('catFilter').onchange=render;
+document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{$('fSizes').value=PRESETS[b.dataset.preset].join(', ');});
+$('fCat').onchange=()=>{
+  const c=$('fCat').value, cur=$('fSizes').value.trim();
+  const isPreset=Object.values(PRESETS).some(a=>a.join(', ')===cur);
+  if(isPreset)$('fSizes').value=(c==='luxury'?PRESETS.luxury:c==='Offers'?PRESETS.kids:PRESETS.women).join(', ');
+};
+$('fileImages').onchange=async e=>{
+  for(const f of e.target.files){
+    try{imgs=imgs.filter(Boolean);imgs.push(await resizeImage(f));}
+    catch(x){$('dErr').textContent='تعذّر قراءة إحدى الصور.';}
+  }
+  e.target.value=''; renderImgs();
+};
+$('fileImport').onchange=async e=>{
+  const f=e.target.files[0]; if(!f)return;
+  try{
+    const d=JSON.parse(await f.text());
+    if(!Array.isArray(d))throw 0;
+    products=d; fileCopy=JSON.parse(JSON.stringify(d)); saveDraft(); render(); toast('تم فتح الملف');
+  }catch(x){toast('الملف غير صالح');}
+  e.target.value='';
+};
+window.addEventListener('beforeunload',e=>{
+  if(JSON.stringify(products)!==JSON.stringify(fileCopy)){e.preventDefault();e.returnValue='';}
+});
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600);}
+
+init();
+</script>
+</body>
+</html>
